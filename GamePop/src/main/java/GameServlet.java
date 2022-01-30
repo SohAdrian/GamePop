@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.http.HttpSession;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -73,46 +74,48 @@ public class GameServlet extends HttpServlet {
 				listGames(request, response);
 				break;
 			}
-			
+
 		} catch (SQLException ex) {
 			throw new ServletException(ex);
 		}
 	}
-	
+
 	// Step 5: listUsers function to connect to the database and retrieve all users
-		// records
-		private void listGames(HttpServletRequest request, HttpServletResponse response)
-				throws SQLException, IOException, ServletException {
-			
-			List<Game> games = new ArrayList<>();
-			try (Connection connection = getConnection();
+	// records
+	private void listGames(HttpServletRequest request, HttpServletResponse response)
+			throws SQLException, IOException, ServletException {
 
-					// Step 5.1: Create a statement using connection object
-					PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_GAMES);) {
+		List<Game> games = new ArrayList<>();
+		try (Connection connection = getConnection();
 
-				// Step 5.2: Execute the query or update query
-				ResultSet rs = preparedStatement.executeQuery();
+				// Step 5.1: Create a statement using connection object
+				PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_GAMES);) {
 
-				// Step 5.3: Process the ResultSet object.
-				while (rs.next()) {
-					String gameName = rs.getString("gameName");
-					String gamePicture = rs.getString("gamePicture");
-					String gameDescription = rs.getString("gameDescription");
-					String genre = rs.getString("genre");
-					games.add(new Game(gameName, gamePicture, gameDescription, genre));
-				}
-				
-			} catch (SQLException e) {
-				System.out.println(e.getMessage());
+			// Step 5.2: Execute the query or update query
+			ResultSet rs = preparedStatement.executeQuery();
+
+			// Step 5.3: Process the ResultSet object.
+			while (rs.next()) {
+				String gameName = rs.getString("gameName");
+
+				HttpSession session = request.getSession();
+				session.setAttribute("gameName", gameName);
+
+				String gamePicture = rs.getString("gamePicture");
+				String gameDescription = rs.getString("gameDescription");
+				String genre = rs.getString("genre");
+				games.add(new Game(gameName, gamePicture, gameDescription, genre));
 			}
 
-			// Step 5.4: Set the users list into the listUsers attribute to be pass to the
-			// userManagement.jsp
-			request.setAttribute("listGames", games);
-			request.getRequestDispatcher("/gameReview.jsp").forward(request, response);
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
 
-		
-		
+		// Step 5.4: Set the games list into the listGames attribute to be pass to the
+		// userManagement.jsp
+		request.setAttribute("listGames", games);
+		request.getRequestDispatcher("/GameReview.jsp").forward(request, response);
+
 		// TODO Auto-generated method stub
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
