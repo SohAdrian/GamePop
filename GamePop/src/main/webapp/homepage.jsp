@@ -11,22 +11,32 @@
 	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
 	crossorigin="anonymous">
 </head>
+
 <body>
-	<h1>Testing Homepage</h1>
+	<nav id="header" class="navbar navbar-expand-sm ">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<div class="collapse navbar-collapse"
+					id="bs-example-navbar-collapse1">
+					<ul class="nav navbar-nav">
+						<li><a>Games Review</a></li>
+						<li><a>Guides</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</nav>
+
+	<h1>GamePop Home Page</h1>
 	<div class="row center" style="float: none; margin: 0 auto;">
-		<div class="flip-container" c:forEach var="game" items="${listGames}">
-			<div class="flipper">
-				<div class="front">
-					<a href="#"> <img class="img-fluid img-thumbnail"
-						src='{{game.gamePicture}}' />
-					</a>
-				</div>
-				<div class="back">
-					<div class="bg-dark mystyle text-center py-3">
-						<span>{{game.gameName}}</span><br>
-						<button href="#" class="button">See More</button>
-					</div>
-				</div>
+		<div class="card" c:forEach var="game" items="${listGames}">
+			<a href="#"> <img class="img-fluid img-thumbnail"
+				src='c:out value="${game.gamePicture}"' />
+			</a>
+			<div>
+				<p>c:out value="${game.gameName}"</p>
+				<br>
+				<button class="button" href="<%=request.getContextPath()%>/GameReview.jsp">SeeReview</button>
 			</div>
 		</div>
 	</div>
