@@ -28,12 +28,12 @@ public class ReviewServlet extends HttpServlet {
 
 	// Step 2: Prepare list of SQL prepared statements to perform CRUD to our
 	// database
-	private static final String INSERT_REVIEWS_SQL = "INSERT INTO Game_Review"
-			+ " (gameName, username, rating, comment) VALUES " + " (?, ?, ?, ?);";
-	private static final String SELECT_REVIEW_BY_ID = "select gameName, username, rating, comment from Game_Review where gameName =?";
-	private static final String SELECT_ALL_REVIEWS = "select * from Game_Review ";
-	private static final String DELETE_REVIEWS_SQL = "delete from Game_Review where gameName = ?;";
-	private static final String UPDATE_REVIEWS_SQL = "update Game_Review set username = ?,rating = ?, comment = ? where gameName = ?;";
+	private static final String INSERT_REVIEWS_SQL = "INSERT INTO GAME_REVIEW"
+			+ " (reviewId, gameName, username, rating, comment) VALUES " + " (?, ?, ?, ?);";
+	private static final String SELECT_REVIEW_BY_ID = "select reviewId, gameName, username, rating, comment from GAME_REVIEW where reviewId =?";
+	private static final String SELECT_ALL_REVIEWS = "select * from GAME_REVIEW ";
+	private static final String DELETE_REVIEWS_SQL = "delete from GAME_REVIEW where reviewId = ?;";
+	private static final String UPDATE_REVIEWS_SQL = "update GAME_REVIEW set username = ?, rating = ?, comment = ? where reviewId = ?;";
 
 	private static final long serialVersionUID = 1L;
 
@@ -111,11 +111,12 @@ public class ReviewServlet extends HttpServlet {
 
 			// Step 5.3: Process the ResultSet object.
 			while (rs.next()) {
+				Number reviewId = rs.getInt("reviewId");
 				String gameName = rs.getString("gameName");
 				String username = rs.getString("username");
 				Number rating = rs.getInt("rating");
 				String comment = rs.getString("comment");
-				reviews.add(new Review(gameName, username, rating, comment));
+				reviews.add(new Review(reviewId, gameName, username, rating, comment));
 			}
 
 		} catch (SQLException e) {
@@ -153,17 +154,17 @@ public class ReviewServlet extends HttpServlet {
 		// Step 2: retrieve the parameters from the request from the web form
 
 		HttpSession session = request.getSession();
+
 		String n = (String) session.getAttribute("gameName");
 
 		// String n = request.getParameter("gameName");
 
+		String id = request.getParameter("reviewId");
 		String u = request.getParameter("username");
 		String r = request.getParameter("rating");
 		String c = request.getParameter("comment");
 
-		// Step 3: attempt connection to database using JDBC, you can change the
-		// username and password accordingly using the phpMyAdmin > User Account
-		// dashboard
+		// Step 3: attempt connection to database using JDBC
 
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
@@ -171,25 +172,26 @@ public class ReviewServlet extends HttpServlet {
 
 			// Step 4: implement the sql query using prepared statement
 			// (https://docs.oracle.com/javase/tutorial/jdbc/basics/prepared.html)
-			PreparedStatement ps = con.prepareStatement("insert into GAME_REVIEW values(?,?,?)");
+			PreparedStatement ps = con.prepareStatement("insert into GAME_REVIEW values(?,?,?,?,?)");
 
 			// Step 5: parse in the data retrieved from the web form request into the
 			// prepared statement accordingly
-			ps.setString(1, n);
-			ps.setString(2, u);
-			ps.setString(3, r);
-			ps.setString(4, c);
+			ps.setString(1, id);
+			ps.setString(2, n);
+			ps.setString(3, u);
+			ps.setString(4, r);
+			ps.setString(5, c);
 
 			// Step 6: perform the query on the database using the prepared statement
 			int i = ps.executeUpdate();
 
 			// Step 7: check if the query had been successfully execute, return “You are
 			// successfully registered” via the response,
-			if (i > 0) {
-				PrintWriter writer = response.getWriter();
-				writer.println("<h1>" + "You have successfully registered an account!" + "</h1>");
-				writer.close();
-			}
+//			if (i > 0) {
+//				PrintWriter writer = response.getWriter();
+//				writer.println("<h1>" + "You have successfully registered an account!" + "</h1>");
+//				writer.close();
+//			}
 		}
 
 		// Step 8: catch and print out any exception

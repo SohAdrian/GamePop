@@ -1,10 +1,12 @@
 
 public class Review {
-
+	
+	protected Number reviewId;
 	protected String gameName;
 	
-	public Review(String gameName, String username, Number rating, String comment) {
+	public Review(Number reviewId, String gameName, String username, Number rating, String comment) {
 		super();
+		this.reviewId = reviewId;
 		this.gameName = gameName;
 		this.username = username;
 		this.rating = rating;
@@ -15,6 +17,20 @@ public class Review {
 	protected String username;
 	protected Number rating;
 	protected String comment;
+	
+	/**
+	 * @return the reviewId
+	 */
+	public Number getReviewId() {
+		return reviewId;
+	}
+
+	/**
+	 * @param gameName the gameName to set
+	 */
+	public void setReviewId(Number reviewId) {
+		this.reviewId = reviewId;
+	}
 
 	/**
 	 * @return the gameName
